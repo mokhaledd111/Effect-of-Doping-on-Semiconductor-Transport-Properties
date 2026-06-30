@@ -1,0 +1,122 @@
+
+
+
+# ============================================================
+# ATLAS input for dopant-dependent (p-type) semiconductor behaviour
+# Temperature value: 400 K
+# Dopant Concentration Range: 0 - 1e22 cm-3
+# ============================================================
+
+go atlas
+
+# ------------------------------------------------------------
+#    This solve is only used as a "template" for the sweep.
+#    The concentration will be overwritten by the sweep variable.
+# ------------------------------------------------------------
+
+set T = 400
+set Na = 1e18
+
+# ------------------------------------------------------------
+# 1. Mesh definition (1-D structure)
+#    x-axis: 0-1 µm (spacing is unimportant for 1-D)
+#    y-axis: 0-10 µm (junction at y=5 µm)
+# ------------------------------------------------------------
+mesh
+    x.mesh  loc=0.0   spac=0.1
+    x.mesh  loc=1.0   spac=0.1
+
+    y.mesh  loc=0.0   spac=0.1
+    y.mesh  loc=5.0   spac=0.1
+    y.mesh  loc=10.0  spac=0.1
+
+# ------------------------------------------------------------
+# 2. Region and electrode definition
+# ------------------------------------------------------------
+region  num=1  material=silicon  
+
+electrode  name=anode    top
+electrode  name=cathode  bottom
+
+# ------------------------------------------------------------
+# 3. Doping profile 
+# ------------------------------------------------------------
+doping  uniform  p.type  conc=$Na
+
+# ------------------------------------------------------------
+# 4. Physical models
+#    - Fermi-Dirac statistics instead of Boltzmann's (FERMI)
+#    - Klaassen's mobility model (KLA)
+#    - Klaassen's bandgap narrowing model (BGN.KLAASSEN)
+#    - Incomplete ionization (INCOMPLETE) for low-T freeze-out
+# ------------------------------------------------------------
+models 	FERMI KLA BGN.KLAASSEN INCOMPLETE PRINT
+models	TEMP=$T
+
+
+OUTPUT 	BAND.TEMP BAND.PARAM CHARGE E.LINES E.VELOCITY E.MOBILITY QSS PERMI \
+	RECOMB U.SRH U.AUG U.RAD FLOWLINES TAURN TAURP
+
+
+PROBE NAME="MobProbe"		AVERAGE	P.MOB DIR=90
+PROBE NAME="ResProbe"		AVERAGE	RESISTIVITY
+PROBE NAME="ConProbe"		AVERAGE	CONDUCTIVITY
+
+
+
+# ------------------------------------------------------------
+# 5. Solve the equilibrium state at a single temperature
+# ------------------------------------------------------------
+LOG	OUTF=	Topic1LogFile.log
+	SOLVE	init
+	SOLVE	prev
+
+	SOLVE NAME=anode	VSTEP = 0.05	VFINAL=1
+
+LOG	OFF
+
+
+# ------------------------------------------------------------
+# 6. Save the structure for later inspection
+# ------------------------------------------------------------
+save  outf=Topic1StructureFile.str
+#TONYPLOT Topic1StructureFile.str
+
+
+extract init infile="Topic1LogFile.log"
+extract name="Maximum Current" max(curve(v."anode", i."anode"))
+extract name="Mobility" y.val from curve(v."anode", probe."MobProbe") where x.val=0
+extract name="Resistivity" y.val from curve(v."anode", probe."ResProbe") where x.val=0
+extract name="Conductivity" y.val from curve(v."anode", probe."ConProbe") where x.val=0
+
+
+# ------------------------------------------------------------
+# 7. Close the ATLAS part – now we switch to DeckBuild sweep
+# ------------------------------------------------------------
+quit
+
+
+
+
+# ============================================================
+# DeckBuild sweep over concentration
+# ============================================================
+go internal
+
+# Load the ATLAS template (the file itself)
+load  infile=Topic1Code.in
+
+# Sweep parameter "Na" from 0 to 1e22 cm-3 (discrete values in list)
+sweep 	PARAMETER=Na	TYPE=LIST 	DATA="0, 1e14, 1e15, 1e16, 1e18, 1e20,1e21, 1e22" \ 
+	PARAMETER=T	TYPE=LIST	DATA="400"
+
+# Save all extracted data into a single .dat file
+save  type=sdb  outfile=Topic1SweepResults.dat
+
+tonyplot Topic1SweepResults.dat
+quit
+
+
+
+
+

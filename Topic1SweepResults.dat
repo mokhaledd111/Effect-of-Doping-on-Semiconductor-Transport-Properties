@@ -1,0 +1,36 @@
+v DBInternal
+# silvaco.file ASCII version=1.14.23 format=1 contents=SDB,Tables=1
+
+Copyright "###################################################################"
+Copyright "#                    Copyright Silvaco Inc. (c)                   #"
+Copyright "#                            1992-2014                            #"
+Copyright "#                                                                 #"
+Copyright "# This file format and the following Key are copyright Silvaco    #"
+Copyright "# International. You may not use, this format or key without      #"
+Copyright "# reproducing this message in full and obtaining                  #"
+Copyright "# express written permission from Silvaco Inc.                    #"
+Copyright "#                                                                 #"
+Copyright "# To obtain such permission please contact: Silvaco Inc.          #"
+Copyright "#                                           support@silvaco.com   #"
+Copyright "#                                                                 #"
+Copyright "# KEY=SVC86hn7562asdx                       PROD=345              #"
+Copyright "###################################################################"
+#dbinternal 2.11.7.R (Thu, Feb 08, 2018  3:51:09 PM)
+#libSDB 1.12.42 (Wed, Feb 07, 2018  1:16:10 PM)
+p 7 10000 10001 10002 10003 10004 10005 10006
+d 1 0 400 9.6720100000000004e-09 246.43700000000001 1033910000 9.6720100000000004e-10
+d 2 1e+14 400 4.0024799999999999e-08 246.124 249845000 4.00248e-09
+d 3 1e+15 400 3.9149799999999998e-07 244.53999999999999 25542900 3.9149799999999999e-08
+d 4 1e+16 400 3.7567200000000001e-06 236.61600000000001 2661900 3.7567199999999998e-07
+d 5 1e+18 400 0.000122836 121.77800000000001 81409.600000000006 1.22836e-05
+d 6 1e+20 400 0.000158275 10.9727 63181 1.5827500000000001e-05
+d 7 1e+21 400 5.7385500000000001e-05 1.4407099999999999 174260 5.7385500000000003e-06
+d 8 1e+22 400 1.97086e-05 0.3291 512492 8.5946700000000002e-05
+Q 10000 1 ex_id
+Q 10001 1 Na
+Q 10002 1 T
+Q 10003 1 "Maximum Current"
+Q 10004 1 Mobility
+Q 10005 1 Resistivity
+Q 10006 1 Conductivity
+EOF 619418960
